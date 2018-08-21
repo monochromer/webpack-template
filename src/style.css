@@ -1,0 +1,16 @@
+html {
+  font: 100%/1.5 sans-serif;
+  background: #F5F7FA;
+  color: #3A4B56;
+}
+
+.EMPTY_TEST {  }
+
+a {
+  color: #ff0000;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+}

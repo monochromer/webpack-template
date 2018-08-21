@@ -1,0 +1,26 @@
+{
+  "presets": [
+    ["env", {
+      "modules": false
+    }],
+    "react"
+  ],
+  "plugins": [
+    "transform-runtime",
+    "transform-object-rest-spread",
+    "transform-decorators"
+  ],
+  "env": {
+    "production": {
+      "plugins": [
+        "transform-react-constant-elements",
+        "transform-react-inline-elements",
+        ["transform-react-remove-prop-types", {
+          "mode": "remove",
+          "ignoreFilenames": ["node_modules"],
+          "additionalLibraries": ["react-immutable-proptypes"]
+        }]
+      ]
+    }
+  }
+}
