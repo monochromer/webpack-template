@@ -45,7 +45,7 @@ const commonPlugins = [
 
 const envPlugins = {
   'production': [
-      plugins['css-mqpacker', 'postcss-csso']
+      plugins['css-mqpacker'], plugins['postcss-csso']
   ],
   'development': []
 };
