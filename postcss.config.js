@@ -12,18 +12,14 @@ function isMin(mq) {
 function sortMediaQueries(a, b) {
   let A = a.replace(/\D/g, '');
   let B = b.replace(/\D/g, '');
-
-  if (isMax(a) && isMax(b)) {
-    return B - A;
-  } else if (isMin(a) && isMin(b)) {
-    return A - B;
-  } else if (isMax(a) && isMin(b)) {
-    return 1;
-  } else if (isMin(a) && isMax(b)) {
-    return -1;
+  
+  switch (true) {
+    case (isMax(a) && isMax(b)): return B - A;
+    case (isMin(a) && isMin(b)): return A - B;
+    case (isMin(a) && isMax(b)): return -1;
+    case (isMax(a) && isMin(b)): return 1;    
+    default                    : return 1;
   }
-
-  return 1;
 };
 
 const plugins = {
