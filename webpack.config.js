@@ -7,6 +7,7 @@ const CleanWebpackPlugin = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const ManifestPlugin = require('webpack-manifest-plugin');
+const SpriteLoaderPlugin = require('svg-sprite-loader/plugin');
 
 const DEFAULT_NODE_ENV = 'production';
 const NODE_ENV = (process.env.NODE_ENV || DEFAULT_NODE_ENV).trim();
@@ -30,9 +31,9 @@ let entry = {
 // };
 
 let output = {
-  path: path.join(__dirname, 'dist', 'public'),
-  filename: '[name].[contenthash].js',
-  chunkFilename: '[name].[contenthash].js',
+  path: path.join(__dirname, 'dist'),
+  filename: 'js/[name].[contenthash].js',
+  chunkFilename: 'js/[name].[contenthash].js',
   hashDigestLength: 5, // default 20
   publicPath: '/'
 };
@@ -42,7 +43,7 @@ let resolve = {
     path.join(__dirname, 'src'),
     'node_modules'
   ],
-  extensions: ['.js', '.jsx', '.json', '.ts', '.tsx', '.coffee', '.csx']
+  // extensions: ['.js', '.jsx', '.json', '.ts', '.tsx']
 };
 
 let plugins = [
@@ -61,8 +62,8 @@ let plugins = [
   new MiniCssExtractPlugin({
     // Options similar to the same options in webpackOptions.output
     // both options are optional
-    filename: "[name].[contenthash].css",
-    chunkFilename: "[id].css"
+    filename: "css/[name].[contenthash].css",
+    chunkFilename: "css/[id].css"
   }),
   new HtmlWebpackPlugin({
     inject: true,
@@ -75,6 +76,17 @@ let plugins = [
     }
   }),
   new ManifestPlugin(),
+  new SpriteLoaderPlugin({
+    plainSprite: true,
+    spriteAttrs: {
+      style: `
+        position: absolute;
+        z-index: -1;
+        width: 1px;
+        hight: 1px;
+      `.replace(/\s+/gim, '')
+    }
+  })
 ];
 
 let webpackConfigModule = {
@@ -123,18 +135,34 @@ let webpackConfigModule = {
       },
     },
 
+    // {
+    //   test: /\.svg$/,
+    //   loader: 'svg-url-loader',
+    //   options: {
+    //     // Inline files smaller than 10 kB (10240 bytes)
+    //     limit: 10 * 1024,
+    //     // Remove the quotes from the url
+    //     // (they’re unnecessary in most cases)
+    //     noquotes: true,
+    //     iesafe: true
+    //   },
+    // },
+
     {
       test: /\.svg$/,
-      loader: 'svg-url-loader',
-      options: {
-        // Inline files smaller than 10 kB (10240 bytes)
-        limit: 10 * 1024,
-        // Remove the quotes from the url
-        // (they’re unnecessary in most cases)
-        noquotes: true,
-        iesafe: true
-      },
-    },
+      use: [
+        {
+          loader: 'svg-sprite-loader',
+          options: {
+            extract: isProd,
+            spriteFilename: (svgPath) => {
+              return `img/sprite.[md5:hash:hex:8].svg`
+            }
+          }
+        }
+      ]
+    }
+
   ]
 };
 
@@ -145,7 +173,7 @@ let optimization = {
   runtimeChunk: true,
   noEmitOnErrors: true,
   splitChunks: {
-      chunks: 'all'
+    chunks: 'all'
   }
 };
 
